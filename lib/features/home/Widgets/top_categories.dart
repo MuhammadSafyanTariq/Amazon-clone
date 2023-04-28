@@ -3,8 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 
+import '../screens/category_deals_screens.dart';
+
 class TopCategories extends StatelessWidget {
   const TopCategories({super.key});
+  void navigateTOCategoryPage(BuildContext context, String category) {
+    Navigator.pushNamed(
+      context,
+      CategoryScreensDeal.routeName,
+      arguments: category,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,27 +24,33 @@ class TopCategories extends StatelessWidget {
           scrollDirection: Axis.horizontal,
           itemCount: GlobalVariables.categoryImages.length,
           itemBuilder: (context, index) {
-            return Column(
-              children: [
-                Container(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(50),
-                      child: Image.asset(
-                        GlobalVariables.categoryImages[index]['image']!,
-                        fit: BoxFit.cover,
-                        height: 40,
-                        width: 40,
+            return GestureDetector(
+              onTap: () => navigateTOCategoryPage(
+                context,
+                GlobalVariables.categoryImages[index]['title']!,
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(50),
+                        child: Image.asset(
+                          GlobalVariables.categoryImages[index]['image']!,
+                          fit: BoxFit.cover,
+                          height: 40,
+                          width: 40,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                Text(
-                  GlobalVariables.categoryImages[index]['title']!,
-                  style: TextStyle(fontWeight: FontWeight.w400, fontSize: 12),
-                )
-              ],
+                  Text(
+                    GlobalVariables.categoryImages[index]['title']!,
+                    style: TextStyle(fontWeight: FontWeight.w400, fontSize: 12),
+                  )
+                ],
+              ),
             );
           }),
     );
