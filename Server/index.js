@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const authRouter = require("./Routes/auth");
 const adminRouter = require("./Routes/admin");
-// const adminRouter = require("./Routes/admin");
+const productRouter = require("./Routes/product");
 
 const PORT = 3000;
 
@@ -13,6 +13,7 @@ const DB =
 app.use(express.json());
 app.use(authRouter);
 app.use(adminRouter);
+app.use(productRouter);
 mongoose
   .connect(DB)
   .then(() => {

@@ -50,7 +50,7 @@ class AdminServices {
         body: product.toJson(),
       );
       if (response.statusCode == 400) {
-        throw HttpException('Bad request');
+        throw const HttpException('Bad request');
       }
       bool success = httpErrorHandle(response: response, context: context);
       if (success) {
@@ -90,7 +90,7 @@ class AdminServices {
         );
       }
     } catch (err) {
-      showSnackBar(context: context, text: 'eeee' + err.toString());
+      showSnackBar(context: context, text: 'eeee$err');
     }
     return productList;
   }
@@ -115,7 +115,7 @@ class AdminServices {
         ),
       );
       if (response.statusCode == 400) {
-        throw HttpException('Bad request');
+        throw const HttpException('Bad request');
       }
       bool success = httpErrorHandle(response: response, context: context);
       if (success) {

@@ -5,15 +5,23 @@ import 'package:flutter/src/widgets/placeholder.dart';
 class CustomButtom extends StatelessWidget {
   final String text;
   final VoidCallback onTap;
-  const CustomButtom({super.key, required this.text, required this.onTap});
+  final Color? color;
+  const CustomButtom(
+      {super.key, required this.text, required this.onTap, this.color});
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      child: Text(text),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: color == null ? Colors.white : Colors.black,
+        ),
+      ),
       onPressed: onTap,
       style: ElevatedButton.styleFrom(
         minimumSize: Size(double.infinity, 50),
+        backgroundColor: color,
       ),
     );
   }

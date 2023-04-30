@@ -1,33 +1,48 @@
+import 'package:amazon_clone/Commons/Widgets/loader.dart';
 import 'package:amazon_clone/features/home/Widgets/address_box.dart';
-import 'package:amazon_clone/features/home/Widgets/carousel_image.dart';
-import 'package:amazon_clone/features/home/Widgets/deal_of_day.dart';
-import 'package:amazon_clone/features/home/Widgets/top_categories.dart';
-import 'package:amazon_clone/features/search/screens/search_screen.dart';
-import 'package:amazon_clone/provider/user_provider.dart';
+import 'package:amazon_clone/features/product_details/screens/product_detail_screen.dart';
+import 'package:amazon_clone/features/search/services/search_services.dart';
+import 'package:amazon_clone/features/search/widgets/searched_products.dart';
+import 'package:amazon_clone/models/product.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 import '../../../constants/global_variables.dart';
 
-class HomeScreen extends StatefulWidget {
-  static const String routeName = '/home';
-  const HomeScreen({super.key});
+class SearchScreen extends StatefulWidget {
+  static const String routeName = '/search-screen';
+  final String searchQuery;
+  const SearchScreen({super.key, required this.searchQuery});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<SearchScreen> createState() => _SearchScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _SearchScreenState extends State<SearchScreen> {
+  List<Product>? products;
+  final SearchServices searchServices = SearchServices();
+  @override
+  void initState() {
+    super.initState();
+    fetchSearchedProducts();
+  }
+
+  void fetchSearchedProducts() async {
+    products = await searchServices.fetchSearchedProducts(
+      context: context,
+      searchQuery: widget.searchQuery,
+    );
+    setState(() {});
+  }
+
   void navigateToSearchPage(String query) {
     Navigator.pushNamed(context, SearchScreen.routeName, arguments: query);
   }
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<UserProvider>(context).user;
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60),
@@ -95,20 +110,31 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            children: [
-              AddressBox(),
-              10.heightBox,
-              TopCategories(),
-              10.heightBox,
-              CrouselImage(),
-              DealOfDay()
-            ],
-          ),
-        ),
-      ),
+      body: products == null
+          ? const Loader()
+          : Center(
+              child: Column(
+                children: [
+                  const AddressBox(),
+                  10.heightBox,
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: products!.length,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () => Navigator.pushNamed(
+                              context, ProductDetailScreen.routeName,
+                              arguments: products![index]),
+                          child: SearchedProduct(
+                            product: products![index],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
     );
   }
 }
