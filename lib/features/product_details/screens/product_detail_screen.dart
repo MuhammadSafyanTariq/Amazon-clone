@@ -46,6 +46,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     }
   }
 
+  void addToCart() {
+    productDetailsServices.addToCart(context: context, product: widget.product);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -209,7 +213,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               child: CustomButtom(
                 text: 'Add to Cart',
                 color: const Color.fromRGBO(254, 216, 19, 1),
-                onTap: () {},
+                onTap: addToCart,
               ),
             ),
             10.heightBox,

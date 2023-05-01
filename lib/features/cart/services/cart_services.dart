@@ -11,47 +11,19 @@ import '../../../constants/Error_handling.dart';
 import '../../../constants/global_variables.dart';
 import '../../../provider/user_provider.dart';
 
-class ProductDetailsServices {
-  void rateProduct({
-    required BuildContext context,
-    required Product product,
-    required double rating,
-  }) async {
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
-    try {
-      http.Response response = await http.post(
-        Uri.parse('$uri/api/rate-product'),
-        headers: {
-          'Content-Type': 'application/json; charset=UTF-8',
-          'x-auth-token': userProvider.user.token,
-        },
-        body: jsonEncode({
-          'id': product.id,
-          'rating': rating,
-        }),
-      );
-
-      httpErrorHandle(response: response, context: context);
-    } catch (e) {
-      showSnackBar(context: context, text: e.toString());
-    }
-  }
-
-  void addToCart({
+class CartServices {
+  void removeFromCart({
     required BuildContext context,
     required Product product,
   }) async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     try {
-      http.Response response = await http.post(
-        Uri.parse('$uri/api/add-to-cart'),
+      http.Response response = await http.delete(
+        Uri.parse('$uri/api/remove-from-cart/${product.id}'),
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
           'x-auth-token': userProvider.user.token,
         },
-        body: jsonEncode({
-          'id': product.id,
-        }),
       );
 
       bool success = httpErrorHandle(response: response, context: context);

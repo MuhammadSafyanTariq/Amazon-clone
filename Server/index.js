@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const authRouter = require("./Routes/auth");
 const adminRouter = require("./Routes/admin");
 const productRouter = require("./Routes/product");
+const userRouter = require("./Routes/user");
 
 const PORT = 3000;
 
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use(authRouter);
 app.use(adminRouter);
 app.use(productRouter);
+app.use(userRouter);
 mongoose
   .connect(DB)
   .then(() => {
