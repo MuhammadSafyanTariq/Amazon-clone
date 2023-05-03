@@ -2,9 +2,11 @@ import 'package:amazon_clone/Commons/Widgets/Custom_buttom.dart';
 import 'package:amazon_clone/Commons/Widgets/Custom_textfeild.dart';
 import 'package:amazon_clone/Services/auth_service.dart';
 import 'package:amazon_clone/constants/global_variables.dart';
+import 'package:amazon_clone/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:provider/provider.dart';
 
 enum Auth {
   signin,
