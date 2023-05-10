@@ -1,3 +1,4 @@
+import 'package:amazon_clone/features/Admin/screens/order_screen.dart';
 import 'package:amazon_clone/features/Admin/screens/post_screens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -27,9 +28,7 @@ class _AdminScreenState extends State<AdminScreen> {
     const Center(
       child: Text('Analytics page'),
     ),
-    const Center(
-      child: Text('Cart page'),
-    ),
+    const OrderScreen(),
   ];
   @override
   Widget build(BuildContext context) {

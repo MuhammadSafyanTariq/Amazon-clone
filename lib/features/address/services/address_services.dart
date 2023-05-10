@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:amazon_clone/Commons/Widgets/utils.dart';
 import 'package:amazon_clone/constants/Error_handling.dart';
 import 'package:amazon_clone/models/product.dart';
@@ -10,7 +9,6 @@ import 'package:cloudinary_public/cloudinary_public.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-
 import '../../../constants/global_variables.dart';
 
 class AddressServices {
@@ -38,6 +36,8 @@ class AddressServices {
         User user = userProvider.user.copyWith(
           address: jsonDecode(response.body)['address'],
         );
+
+        userProvider.setUserFromModel(user);
       }
     } catch (e) {
       showSnackBar(context: context, text: e.toString());
@@ -48,33 +48,40 @@ class AddressServices {
     }
   }
 
-  Future<List<Product>> fetchAllProducts(BuildContext context) async {
+  void placeOrder(
+      {required BuildContext context,
+      required String address,
+      required double totalSum}) async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
-    List<Product> productList = [];
     try {
-      http.Response res =
-          await http.get(Uri.parse('$uri/admin/get-products'), headers: {
-        'Content-Type': 'application/json; charset=UTF-8',
-        'x-auth-token': userProvider.user.token,
-      });
+      http.Response res = await http.post(Uri.parse('$uri/api/order'),
+          headers: {
+            'Content-Type': 'application/json; charset=UTF-8',
+            'x-auth-token': userProvider.user.token,
+          },
+          body: jsonEncode({
+            'cart': userProvider.user.cart,
+            'address': address,
+            'totalPrice': totalSum,
+          }));
 
       bool success = httpErrorHandle(
         response: res,
         context: context,
       );
-      for (int i = 0; i < jsonDecode(res.body).length; i++) {
-        productList.add(
-          Product.fromJson(
-            jsonEncode(
-              jsonDecode(res.body)[i],
-            ),
-          ),
+      if (success) {
+        showSnackBar(
+          context: context,
+          text: "Congratulations! Your order has been placed",
         );
+        User user = userProvider.user.copyWith(
+          cart: [],
+        );
+        userProvider.setUserFromModel(user);
       }
     } catch (err) {
-      showSnackBar(context: context, text: 'eeee$err');
+      showSnackBar(context: context, text: 'eeee $err');
     }
-    return productList;
   }
 
   void deleteProduct({

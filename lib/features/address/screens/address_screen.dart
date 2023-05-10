@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:amazon_clone/Commons/Widgets/utils.dart';
+import 'package:amazon_clone/features/address/services/address_services.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -29,6 +30,7 @@ class _AddressScreenState extends State<AddressScreen> {
   TextEditingController cityController = TextEditingController();
   final _addressKey = GlobalKey<FormState>();
   List<PaymentItem> paymentItems = [];
+  AddressServices addressServices = AddressServices();
 
   void payPressed(String AddressFromProvider) {
     addressTOBeUsed = '';
@@ -51,6 +53,7 @@ class _AddressScreenState extends State<AddressScreen> {
     } else {
       showSnackBar(context: context, text: 'ERROR');
     }
+    onGooglepayResult(null);
     print(addressTOBeUsed);
   }
 
@@ -76,8 +79,40 @@ class _AddressScreenState extends State<AddressScreen> {
     cityController.dispose();
   }
 
-  void onApplepayResult(res) {}
-  void onGooglepayResult(res) {}
+  void onApplepayResult(res) {
+    if (Provider.of<UserProvider>(context, listen: false)
+        .user
+        .address
+        .isEmpty) {
+      addressServices.saveUserAddress(
+        context: context,
+        address: addressTOBeUsed,
+      );
+      addressServices.placeOrder(
+          context: context,
+          address: addressTOBeUsed,
+          totalSum: double.parse(widget.totalAmount));
+    }
+  }
+
+  void onGooglepayResult(res) {
+    if (Provider.of<UserProvider>(context, listen: false)
+        .user
+        .address
+        .isEmpty) {
+      addressServices.saveUserAddress(
+        context: context,
+        address: addressTOBeUsed,
+      );
+    }
+    addressServices.placeOrder(
+      context: context,
+      address: addressTOBeUsed,
+      totalSum: double.parse(
+        widget.totalAmount,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

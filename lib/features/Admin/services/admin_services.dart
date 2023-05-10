@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:amazon_clone/Commons/Widgets/utils.dart';
 import 'package:amazon_clone/constants/Error_handling.dart';
+import 'package:amazon_clone/features/Account/Widgets/orders.dart';
+import 'package:amazon_clone/models/order.dart';
 import 'package:amazon_clone/models/product.dart';
 import 'package:amazon_clone/provider/user_provider.dart';
 import 'package:cloudinary_public/cloudinary_public.dart';
@@ -118,6 +120,70 @@ class AdminServices {
         throw const HttpException('Bad request');
       }
       bool success = httpErrorHandle(response: response, context: context);
+      if (success) {
+        onSuccess();
+      }
+    } catch (e) {
+      showSnackBar(context: context, text: e.toString());
+    }
+  }
+
+  Future<List<Order>> fetchAllOrders(
+    BuildContext context,
+  ) async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    List<Order> orderList = [];
+    try {
+      http.Response res =
+          await http.get(Uri.parse('$uri/admin/get-orders'), headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'x-auth-token': userProvider.user.token,
+      });
+
+      bool success = httpErrorHandle(
+        response: res,
+        context: context,
+      );
+      for (int i = 0; i < jsonDecode(res.body).length; i++) {
+        orderList.add(
+          Order.fromJson(
+            jsonEncode(
+              jsonDecode(res.body)[i],
+            ),
+          ),
+        );
+      }
+    } catch (err) {
+      showSnackBar(context: context, text: 'Problem in fetching orders: $err');
+    }
+    return orderList;
+  }
+
+  void changeOrderStatus({
+    required BuildContext context,
+    required int status,
+    required Order order,
+    required VoidCallback onSuccess,
+  }) async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+
+    try {
+      http.Response res = await http.post(
+        Uri.parse('$uri/admin/change-order-status'),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'x-auth-token': userProvider.user.token,
+        },
+        body: jsonEncode({
+          'id': order.id,
+          'status': status,
+        }),
+      );
+
+      bool success = httpErrorHandle(
+        response: res,
+        context: context,
+      );
       if (success) {
         onSuccess();
       }

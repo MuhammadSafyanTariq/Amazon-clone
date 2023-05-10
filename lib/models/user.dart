@@ -63,7 +63,7 @@ class User {
     String? address,
     String? type,
     String? token,
-    required List<dynamic>? cart,
+    List<dynamic>? cart,
   }) {
     return User(
       id: id ?? this.id,
