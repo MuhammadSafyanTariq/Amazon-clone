@@ -25,7 +25,9 @@ bool httpErrorHandle({
       break;
     default:
       showSnackBar(
-          context: context, text: "default" + response.statusCode.toString());
+        context: context,
+        text: "default" + response.statusCode.toString(),
+      );
   }
   return false;
 }

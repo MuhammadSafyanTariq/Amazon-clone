@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:amazon_clone/Commons/Widgets/utils.dart';
 import 'package:amazon_clone/constants/Error_handling.dart';
 import 'package:amazon_clone/features/Account/Widgets/orders.dart';
+import 'package:amazon_clone/features/Admin/models/adminModel.dart';
 import 'package:amazon_clone/models/order.dart';
 import 'package:amazon_clone/models/product.dart';
 import 'package:amazon_clone/provider/user_provider.dart';
@@ -190,5 +191,42 @@ class AdminServices {
     } catch (e) {
       showSnackBar(context: context, text: e.toString());
     }
+  }
+
+  Future<Map<String, dynamic>> getEarnings(
+    BuildContext context,
+  ) async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    List<Sales> sales = [];
+    int totalEarnings = 0;
+    try {
+      http.Response res =
+          await http.get(Uri.parse('$uri/admin/analytics'), headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'x-auth-token': userProvider.user.token,
+      });
+
+      bool success = httpErrorHandle(
+        response: res,
+        context: context,
+      );
+      if (success) {
+        var response = jsonDecode(res.body);
+        totalEarnings = response['totalEarnings'];
+        sales = [
+          Sales('Mobiles', response['mobileEarnings']),
+          Sales('Essentials', response['essentialEarnings']),
+          Sales('Books', response['booksEarnings']),
+          Sales('Appliances', response['applianceEarnings']),
+          Sales('Fashion', response['fashionEarnings']),
+        ];
+      }
+    } catch (err) {
+      showSnackBar(context: context, text: 'Any Problem ocurred');
+    }
+    return {
+      'sales': sales,
+      'totalEarnings': totalEarnings,
+    };
   }
 }

@@ -1,12 +1,10 @@
 import 'package:amazon_clone/Commons/Widgets/Custom_buttom.dart';
-import 'package:amazon_clone/features/Admin/screens/admin_screen.dart';
 import 'package:amazon_clone/features/Admin/services/admin_services.dart';
 import 'package:amazon_clone/models/order.dart';
 import 'package:amazon_clone/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:velocity_x/velocity_x.dart';
 
 import '../../../constants/global_variables.dart';
 import '../../search/screens/search_screen.dart';
@@ -228,7 +226,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                 child: Stepper(
                   currentStep: currentStep,
                   controlsBuilder: (context, details) {
-                    if (user.type == 'admin') {
+                    if (user.type == 'admin' && currentStep <= 2) {
                       return CustomButtom(
                         text: 'Done',
                         onTap: () => changeOrderStatus(details.currentStep),
